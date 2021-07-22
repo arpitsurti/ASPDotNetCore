@@ -11,6 +11,6 @@ namespace EmployeeManagement.Models
         public string name { get; set; }
 
         public string email { get; set; }
-        public string department { get; set; }
+        public Department department { get; set; }
     }
 }

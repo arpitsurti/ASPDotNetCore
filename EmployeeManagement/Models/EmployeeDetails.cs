@@ -11,10 +11,10 @@ namespace EmployeeManagement.Models
         public EmployeeDetails()
         {
             emp = new List<Employee>();
-            emp.Add(new Employee() { id = 1, department = "IT", email = "arpit@gmail.com", name = "Arpit" });
-            emp.Add(new Employee() { id = 2, department = "Accounting", email = "arpit2@gmail.com", name = "Arpit2" });
-            emp.Add(new Employee() { id = 3, department = "IT", email = "arpit3@gmail.com", name = "Arpit3" });
-            emp.Add(new Employee() { id = 4, department = "IT", email = "arpit4@gmail.com", name = "Arpit4" });
+            emp.Add(new Employee() { id = 1, department = Department.IT, email = "arpit@gmail.com", name = "Arpit" });
+            emp.Add(new Employee() { id = 2, department = Department.Accounting, email = "arpit2@gmail.com", name = "Arpit2" });
+            emp.Add(new Employee() { id = 3, department = Department.IT, email = "arpit3@gmail.com", name = "Arpit3" });
+            emp.Add(new Employee() { id = 4, department = Department.IT, email = "arpit4@gmail.com", name = "Arpit4" });
         }
 
         public IEnumerable<Employee> GetAllEmployees()

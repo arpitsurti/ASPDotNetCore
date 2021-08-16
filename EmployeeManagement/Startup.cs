@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagement
 {
@@ -23,8 +24,9 @@ namespace EmployeeManagement
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(_config.GetConnectionString("EmployeeConnection")));
             services.AddMvc(x=>x.EnableEndpointRouting = false);
-            services.AddSingleton<IEmployee, EmployeeDetails>();
+            services.AddScoped<IEmployee, SQLEmployee>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

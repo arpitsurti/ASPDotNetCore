@@ -35,12 +35,29 @@ namespace EmployeeManagement.Controllers
             return View();
         }
 
+        public ViewResult Edit(int id)
+        {
+            Employee _emp= _iEmployee.GetEmployee(id);
+            return View(_emp);
+        }
+
         [HttpPost]
         public IActionResult Create(Employee emp)
         {
             if (ModelState.IsValid)
             {
                 Employee newEmp = _iEmployee.Add(emp);
+                return RedirectToAction("details", new { id = newEmp.id });
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Employee emp)
+        {
+            if (ModelState.IsValid)
+            {
+                Employee newEmp = _iEmployee.Update(emp);
                 return RedirectToAction("details", new { id = newEmp.id });
             }
             return View();

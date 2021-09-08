@@ -22,6 +22,7 @@ namespace EmployeeManagement.Controllers
 
         public ViewResult Details(int id)
         {
+            throw new Exception("Error in details view");
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
             {
                 Employee = _iEmployee.GetEmployee(id),

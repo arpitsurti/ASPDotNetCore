@@ -36,7 +36,10 @@ namespace EmployeeManagement
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            else
+            {
+                app.UseExceptionHandler("/Error");
+            }
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
             app.Run(async context =>

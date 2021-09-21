@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmployeeManagement
 {
@@ -24,7 +25,9 @@ namespace EmployeeManagement
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(_config.GetConnectionString("EmployeeConnection")));
+            services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(
+                _config.GetConnectionString("EmployeeConnection")));
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
             services.AddMvc(x=>x.EnableEndpointRouting = false);
             services.AddScoped<IEmployee, SQLEmployee>();
         }
@@ -42,6 +45,7 @@ namespace EmployeeManagement
             }
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
+            app.UseAuthentication();
             app.Run(async context =>
               {
                   await context.Response.WriteAsync("Hello World!");

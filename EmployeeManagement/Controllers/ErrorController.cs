@@ -29,7 +29,7 @@ namespace EmployeeManagement.Controllers
             {
                 case 404:
                     logger.LogWarning($"404 error occured {statusCodeResult.OriginalPath}"+
-                        $" and quertstring is {statusCodeResult.OriginalQueryString}");//Using dollar with {} is called strin interpolation
+                        $" and querystring is {statusCodeResult.OriginalQueryString}");//Using dollar with {} is called strin interpolation
                     break;
                 default:
                     break;

@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace EmployeeManagement
 {
@@ -28,11 +30,18 @@ namespace EmployeeManagement
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(
                 _config.GetConnectionString("EmployeeConnection")));
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
-            services.Configure<IdentityOptions>(x => {
+            services.Configure<IdentityOptions>(x =>
+            {
                 x.Password.RequiredLength = 3;
                 x.Password.RequireNonAlphanumeric = false;
-                }) ;
-            services.AddMvc(x=>x.EnableEndpointRouting = false);
+            });
+            //services.AddMvc(x=>x.EnableEndpointRouting = false);
+            services.AddMvc(options =>
+            {
+                var authorizationPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                options.Filters.Add(new AuthorizeFilter(authorizationPolicy));
+                options.EnableEndpointRouting = false;
+            });
             services.AddScoped<IEmployee, SQLEmployee>();
         }
 
@@ -48,10 +57,9 @@ namespace EmployeeManagement
                 app.UseExceptionHandler("/Error");
             }
             app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
-            app.UseAuthorization();
             app.UseAuthentication();
-            
+            app.UseAuthorization();
+            app.UseMvcWithDefaultRoute();
             app.Run(async context =>
               {
                   await context.Response.WriteAsync("Hello World!");

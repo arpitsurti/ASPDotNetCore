@@ -1,5 +1,6 @@
 ﻿using EmployeeManagement.Models;
 using EmployeeManagement.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,21 +10,24 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IEmployee _iEmployee;
         private readonly ILogger<HomeController> logger;
 
-        public HomeController(IEmployee emp,ILogger<HomeController> logger)
+        public HomeController(IEmployee emp, ILogger<HomeController> logger)
         {
             _iEmployee = emp;
             this.logger = logger;
         }
+        [AllowAnonymous]
         public ViewResult Index()
         {
             return View(_iEmployee.GetAllEmployees());
         }
 
+        [AllowAnonymous]
         public ViewResult Details(int id)
         {
             //throw new Exception("Error in details view");
@@ -41,6 +45,7 @@ namespace EmployeeManagement.Controllers
             return View(homeDetailsViewModel);
         }
 
+
         public ViewResult Create()
         {
             return View();
@@ -48,7 +53,7 @@ namespace EmployeeManagement.Controllers
 
         public ViewResult Edit(int id)
         {
-            Employee _emp= _iEmployee.GetEmployee(id);
+            Employee _emp = _iEmployee.GetEmployee(id);
             return View(_emp);
         }
 

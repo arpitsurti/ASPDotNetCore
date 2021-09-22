@@ -84,5 +84,16 @@ namespace EmployeeManagement.Controllers
             }
             return View(model);
         }
+
+        [HttpPost][HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailInUse(string email)
+        {
+            var result = await userManager.FindByEmailAsync(email);
+            if (result == null)
+                return Json(true);
+            else
+                return Json($"Email {email} is already in use.");
+        }
     }
 }

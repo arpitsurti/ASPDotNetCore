@@ -1,4 +1,6 @@
-﻿<html>
+﻿@inject SignInManager<ApplicationUser> signInManager;
+
+<html>
 <head>
     <meta name="viewport" content="width=device-width" />
     @*Below tags help to point the minified version of css on non development env.*@
@@ -17,6 +19,11 @@
               asp-fallback-test-property="position"
               asp-fallback-test-value="absolute"
               asp-suppress-fallback-integrity="true" />
+        <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
     </environment>
     <link href="~/css/site.css" rel="stylesheet" />
     <title>@ViewBag.Title</title>
@@ -37,6 +44,18 @@
                     </li>
                     <li class="nav-item">
                         <a asp-action="create" asp-controller="home" class="nav-link">Add Employee</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Manage
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" asp-controller="Admin"
+                               asp-action="ListUsers">Users</a>
+                            <a class="dropdown-item" asp-controller="Admin"
+                               asp-action="ListRoles">Roles</a>
+                        </div>
                     </li>
                     @if (User.Identity.IsAuthenticated)
                     {

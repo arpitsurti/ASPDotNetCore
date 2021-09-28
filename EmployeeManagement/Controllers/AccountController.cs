@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using EmployeeManagement.Models;
 using EmployeeManagement.ViewModels;
@@ -63,9 +64,12 @@ namespace EmployeeManagement.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login()
+        public async Task<IActionResult> Login(string returnUrl)
         {
-            return View();
+            LoginViewModel model = new LoginViewModel();
+            model.ReturnURL = returnUrl;
+            model.ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            return View(model);
         }
 
         [HttpPost]
@@ -87,7 +91,8 @@ namespace EmployeeManagement.Controllers
             return View(model);
         }
 
-        [HttpPost][HttpGet]
+        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> IsEmailInUse(string email)
         {
@@ -96,6 +101,60 @@ namespace EmployeeManagement.Controllers
                 return Json(true);
             else
                 return Json($"Email {email} is already in use.");
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult ExternalLogin(string provider, string returnURL)
+        {
+            var redirectURL = Url.Action("ExternalLoginCallback", "Account", new { ReturnURL = returnURL });
+            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectURL);
+            return new ChallengeResult(provider, properties);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string remoteError = null, string returnURL = null)
+        {
+            returnURL = returnURL ?? Url.Content("~/");
+            LoginViewModel model = new LoginViewModel();
+            model.ReturnURL = returnURL;
+            model.ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty, $"Error in external provider: {remoteError}");
+                return View("Login", model);
+            }
+
+            var info = await signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                ModelState.AddModelError(string.Empty, $"Error in loading external login information");
+                return View("Login", model);
+            }
+            else
+            {
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                if (email != null)
+                {
+                    var user = await userManager.FindByNameAsync(email);
+                    if (user == null)
+                    {
+                        user = new ApplicationUser
+                        {
+                            UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
+                            Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        };
+                        await userManager.CreateAsync(user);
+                    }
+                    await userManager.AddLoginAsync(user, info);
+                    await signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(returnURL);
+                }
+                ViewBag.ErrorTitle = $"Email claim is not received from: {info.LoginProvider}";
+                ViewBag.ErrorMessage = "Please contact support";
+                return View("Error");
+            }
+
         }
     }
 }

@@ -42,10 +42,7 @@ namespace EmployeeManagement
                 options.Filters.Add(new AuthorizeFilter(authorizationPolicy));
                 options.EnableEndpointRouting = false;
             });
-            services.AddAuthentication().AddGoogle(options=> {
-                options.ClientId = "552830862842-6l3fm1ujg9id4a099fjbittghvgbm6ee.apps.googleusercontent.com";
-                options.ClientSecret = "CmjyB13Q-cU6CXqB7pofLzIN";
-            });
+           
             services.AddScoped<IEmployee, SQLEmployee>();
         }
 
